@@ -33,6 +33,8 @@ classifiers = [
 
 [project.urls]
 Telegram = "https://EmotionfulBot.t.me"
+Repository = "https://github.com/FrostX-Official/emotionful-bot.git"
+Issues = "https://github.com/FrostX-Official/emotionful-bot/issues"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
