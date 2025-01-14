@@ -25,18 +25,20 @@ async def get_start_menu_content(event: Message | CallbackQuery):
             "{heart1} Hi, <b>{name}</b> !\n" \
             "{heart2} To start managing your stickers and emojis please use inline reply keyboard below.\n" \
             "{heart3} Use the /help command to understand how to upload your images and videos into UGC packs.\n" \
-            "💸 Use the /donate command to support the bot.\n" \
-            "⚠ Report any issues to @frostxoff !"
+            "💸 Use the /donate command to support the bot with Telegram stars.\n" \
+            "⚠ Report any issues to <b>@frostxoff !</b>"
         ).format(
             heart1=heart1,
             heart2=heart2,
             heart3=heart3,
             name=name
-        ), InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text=_("📁 Manage your packs"), callback_data="manage_packs")],
-            [InlineKeyboardButton(text=_("🌠 New Pack"), callback_data="new_pack")],
-            [InlineKeyboardButton(text=_("❌ Quickly Delete Asset"), callback_data="quickdelete")]
-        ])
+        ),
+        InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text=_("📁 Manage your packs"), callback_data="manage_packs")],
+                [InlineKeyboardButton(text=_("🌠 New Pack"), callback_data="new_pack")],
+                [InlineKeyboardButton(text=_("❌ Quickly Delete Asset"), callback_data="quickdelete")]
+            ]
+        )
     )
     
 @router.message(CommandStart())
