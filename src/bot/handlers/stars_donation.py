@@ -67,6 +67,7 @@ async def donate_query_handler(query: CallbackQuery, user: User) -> None:
         text=text,
         reply_markup=reply_markup
     )
+    await query.message.delete()
 
 @router.callback_query(F.data == "donations_leaderboard")
 async def leaderboard_query_handler(query: CallbackQuery, user: User) -> None:
@@ -95,7 +96,7 @@ async def donation_callback(query: CallbackQuery) -> None:
     amount = query.data.split("_")[1]
     await query.message.answer_invoice(
         title=_("💘 Donation") + f" (⭐ {amount})",
-        description=_("Donate to Emotionful Bot!"),
+        description=_("Support Emotionful Bot with Telegram stars!"),
         payload="donation_"+str(amount),
         currency=TELEGRAM_STARS,
         prices=[
@@ -103,6 +104,7 @@ async def donation_callback(query: CallbackQuery) -> None:
         ],
         reply_markup=keyboard
     )
+    await query.message.delete()
 
 @router.pre_checkout_query()
 async def donate_checkout_handler(event: PreCheckoutQuery) -> None:
