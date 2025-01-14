@@ -22,10 +22,11 @@ async def get_start_menu_content(event: Message | CallbackQuery):
 
     return (
         _(
-            "{heart1} Hello, <b>{name}</b> !\n" \
+            "{heart1} Hi, <b>{name}</b> !\n" \
             "{heart2} To start managing your stickers and emojis please use inline reply keyboard below.\n" \
             "{heart3} Use the /help command to understand how to upload your images and videos into UGC packs.\n" \
-            "⚠ Report any issues to @frostxoff"
+            "💸 Use the /donate command to support the bot.\n" \
+            "⚠ Report any issues to @frostxoff !"
         ).format(
             heart1=heart1,
             heart2=heart2,
