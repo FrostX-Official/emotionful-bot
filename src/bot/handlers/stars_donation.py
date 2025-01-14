@@ -1,3 +1,4 @@
+import json
 import logging
 
 from aiogram import Router, F, Bot
@@ -5,12 +6,11 @@ from aiogram.types import Message, CallbackQuery, LabeledPrice, PreCheckoutQuery
 from aiogram.utils.keyboard import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.filters import Command
 
-from tortoise.contrib.pydantic import pydantic_queryset_creator
-import json
-
 from aiogram.utils.i18n import gettext as _
 
-from db import *
+from tortoise.contrib.pydantic import pydantic_queryset_creator
+
+from db import User
 
 router = Router()
 
@@ -44,8 +44,8 @@ async def donate_command_handler(message: Message, user: User) -> None:
 
     text, reply_markup = await get_donate_data(user)
     await message.answer(
-        text=text,
-        reply_markup=reply_markup
+        text = text,
+        reply_markup = reply_markup
     )
 
 @router.callback_query(F.data == "donate_from_leaderboard")
@@ -54,8 +54,8 @@ async def donate_query_handler(query: CallbackQuery, user: User) -> None:
 
     text, reply_markup = await get_donate_data(user)
     await query.message.edit_text(
-        text=text,
-        reply_markup=reply_markup
+        text = text,
+        reply_markup = reply_markup
     )
 
 @router.callback_query(F.data == "donate")
@@ -64,8 +64,8 @@ async def donate_query_handler(query: CallbackQuery, user: User) -> None:
 
     text, reply_markup = await get_donate_data(user)
     await query.message.answer(
-        text=text,
-        reply_markup=reply_markup
+        text = text,
+        reply_markup = reply_markup
     )
     await query.message.delete()
 
@@ -95,14 +95,14 @@ async def donation_callback(query: CallbackQuery) -> None:
 
     amount = query.data.split("_")[1]
     await query.message.answer_invoice(
-        title=_("💘 Donation") + f" (⭐ {amount})",
-        description=_("Support Emotionful Bot with Telegram stars!"),
-        payload="donation_"+str(amount),
-        currency=TELEGRAM_STARS,
-        prices=[
+        title = _("💘 Donation") + f" (⭐ {amount})",
+        description = _("Support Emotionful Bot with Telegram stars!"),
+        payload = "donation_"+str(amount),
+        currency = TELEGRAM_STARS,
+        prices = [
             LabeledPrice(label=TELEGRAM_STARS, amount=amount),
         ],
-        reply_markup=keyboard
+        reply_markup = keyboard
     )
     await query.message.delete()
 

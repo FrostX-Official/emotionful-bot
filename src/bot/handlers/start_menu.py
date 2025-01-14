@@ -9,8 +9,6 @@ from aiogram.utils.i18n import gettext as _
 
 from ..utils.random_heart import random_heart, random_heart_with_exclusion
 
-from db import *
-
 router = Router()
 
 async def get_start_menu_content(event: Message | CallbackQuery):
