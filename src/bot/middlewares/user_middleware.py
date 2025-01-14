@@ -15,14 +15,19 @@ class UserMiddleware(BaseMiddleware):
     ) -> Any:
         current_event = (
             event.message or
-            event.callback_query
+            event.callback_query or
+            event.pre_checkout_query
         )
+        if not current_event:
+            return await handler(event, data)
         #logging.warn(f"@{current_event.from_user.username} triggered event.")
 
         user = await User.get_or_create(
             id=current_event.from_user.id,
-            username=current_event.from_user.username,
-            stars=0
+            defaults={
+                "username": current_event.from_user.username,
+                "stars": 0
+            }
         )
 
         data["user"] = user[0]

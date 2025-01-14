@@ -13,6 +13,13 @@ from bot.handlers import setup_routers
 from bot.middlewares import UserMiddleware
 from config_reader import config
 
+bot = Bot(
+    token = config.BOT_TOKEN.get_secret_value(),
+    default = DefaultBotProperties(parse_mode=ParseMode.HTML)
+)
+dp = Dispatcher()
+i18n = I18n(path="locales", default_locale="en", domain="messages")
+
 async def on_startup() -> None:
     logging.log(100, "Dispatcher Start")
     await Tortoise.init(
@@ -21,18 +28,18 @@ async def on_startup() -> None:
     )
     await Tortoise.generate_schemas()
 
+    # # Refund transactions that were used in testing
+    # result = await bot.get_star_transactions()
+    # for transaction in result.transactions:
+    #     if transaction.source.type != "user":
+    #         continue
+    #     await bot.refund_star_payment(transaction.source.user.id, transaction.id)
+
 async def on_shutdown() -> None:
     logging.log(100, "Dispatcher Shutdown")
     await Tortoise.close_connections()
 
 async def main() -> None:
-    bot = Bot(
-        config.BOT_TOKEN.get_secret_value(),
-        default=DefaultBotProperties(parse_mode=ParseMode.HTML)
-    )
-    dp = Dispatcher()
-    i18n = I18n(path="locales", default_locale="en", domain="messages")
-
     dp.startup.register(on_startup)
     dp.shutdown.register(on_shutdown)
 

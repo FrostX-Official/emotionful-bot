@@ -48,7 +48,7 @@ async def start_command_handler(message: Message) -> None:
 
 @router.callback_query(F.data=="start")
 async def start_callback_handler(query: CallbackQuery):
-    logging.warn(f"@{query.from_user.username} used /start query.")
+    logging.warn(f"@{query.from_user.username} used start query.")
 
     text, reply_markup = await get_start_menu_content(query)
     await query.message.edit_text(text, reply_markup=reply_markup)
