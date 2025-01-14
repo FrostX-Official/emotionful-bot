@@ -74,7 +74,7 @@ async def leaderboard_query_handler(query: CallbackQuery, user: User) -> None:
     logging.warn(f"@{query.from_user.username} used donations leaderboard query.")
 
     leaderboard = await pydantic_queryset_creator(User).from_queryset(User.all().order_by("-stars"))
-    leaderboard_formatted = _("😼 Current Donations Leaderboard ->\n")
+    leaderboard_formatted = _("🏆 Current Donations Leaderboard ->\n")
 
     leaderboard_place = 0
     for user in json.loads(leaderboard.model_dump_json()):
