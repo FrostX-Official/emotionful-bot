@@ -5,6 +5,9 @@ from aiogram.types import Message, CallbackQuery, LabeledPrice, PreCheckoutQuery
 from aiogram.utils.keyboard import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.filters import Command
 
+from tortoise.contrib.pydantic import pydantic_queryset_creator
+import json
+
 from aiogram.utils.i18n import gettext as _
 
 from db import *
@@ -24,10 +27,10 @@ async def get_donate_data(user: User) -> tuple[str, InlineKeyboardMarkup]:
     """
 
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="⭐ 1", callback_data="donation_1")],
-        [InlineKeyboardButton(text="⭐ 49", callback_data="donation_49")],
-        [InlineKeyboardButton(text="⭐ 249", callback_data="donation_149")],
-        [InlineKeyboardButton(text="⭐ 499", callback_data="donation_499")],
+        [InlineKeyboardButton(text="⭐ 1", callback_data="donation_1"), InlineKeyboardButton(text="⭐ 49", callback_data="donation_49")],
+        [InlineKeyboardButton(text="⭐ 249", callback_data="donation_149"), InlineKeyboardButton(text="⭐ 499", callback_data="donation_499")],
+        [InlineKeyboardButton(text="⭐ 1999", callback_data="donation_1999")],
+        [InlineKeyboardButton(text=_("🏆 Leaderboard"), callback_data="donations_leaderboard")],
     ])
 
     total_stars_donated = user.stars
@@ -45,6 +48,16 @@ async def donate_command_handler(message: Message, user: User) -> None:
         reply_markup=reply_markup
     )
 
+@router.callback_query(F.data == "donate_from_leaderboard")
+async def donate_query_handler(query: CallbackQuery, user: User) -> None:
+    logging.warn(f"@{query.from_user.username} used donate query. (from donations leaderboard)")
+
+    text, reply_markup = await get_donate_data(user)
+    await query.message.edit_text(
+        text=text,
+        reply_markup=reply_markup
+    )
+
 @router.callback_query(F.data == "donate")
 async def donate_query_handler(query: CallbackQuery, user: User) -> None:
     logging.warn(f"@{query.from_user.username} used donate query.")
@@ -53,6 +66,23 @@ async def donate_query_handler(query: CallbackQuery, user: User) -> None:
     await query.message.answer(
         text=text,
         reply_markup=reply_markup
+    )
+
+@router.callback_query(F.data == "donations_leaderboard")
+async def leaderboard_query_handler(query: CallbackQuery, user: User) -> None:
+    logging.warn(f"@{query.from_user.username} used donations leaderboard query.")
+
+    leaderboard = await pydantic_queryset_creator(User).from_queryset(User.all().order_by("-stars"))
+    leaderboard_formatted = _("😼 Current Donations Leaderboard ->\n")
+
+    leaderboard_place = 0
+    for user in json.loads(leaderboard.model_dump_json()):
+        leaderboard_place += 1
+        leaderboard_formatted += f"<b>#{leaderboard_place} // @{user['username']} // ⭐ {user['stars']}</b>\n"
+
+    await query.message.edit_text(
+        text=leaderboard_formatted,
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=_("🔙 Back"), callback_data="donate_from_leaderboard")]])
     )
 
 @router.callback_query(F.data.startswith("donation"))
@@ -80,10 +110,10 @@ async def donate_checkout_handler(event: PreCheckoutQuery) -> None:
 
 @router.message(F.successful_payment)
 async def successful_donation(message: Message, user: User, bot: Bot) -> None:
-    await bot.refund_star_payment(
-        user_id = message.from_user.id,
-        telegram_payment_charge_id = message.successful_payment.telegram_payment_charge_id,
-    )
+    # await bot.refund_star_payment(
+    #     user_id = message.from_user.id,
+    #     telegram_payment_charge_id = message.successful_payment.telegram_payment_charge_id,
+    # )
 
     amount = message.successful_payment.total_amount
     logging.warn(f"@{message.from_user.username} donated {amount} star(s)!")

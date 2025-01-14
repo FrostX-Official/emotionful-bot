@@ -10,4 +10,4 @@ async def fix_command(message: Message) -> None:
     Fixes old keyboard inside bot ("Bot Commands" button)
     """
 
-    await message.answer("Fixing...", reply_markup=ReplyKeyboardRemove())
+    await message.answer("<i>internal keyboard fix</i>", reply_markup=ReplyKeyboardRemove())
