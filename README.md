@@ -1,10 +1,10 @@
 > [!NOTE]
 > Work In Progress.
 > Bot is not finished at all and won't be finished anytime soon. *(probably)*
-# [@EmotionfulBot](tg://resolve?domain=EmotionfulBot) on Telegram
+# [@EmotionfulBot](EmotionfulBot.t.me) on Telegram
 An advanced Telegram stickers/emojis manager tool wrapped in Telegram Bot.
 
-# TODO
+## TODO 
 * Make actual packs listing
 * Ability to create packs
 * Quick delete features that allows to delete anything from any pack (if it's your)
