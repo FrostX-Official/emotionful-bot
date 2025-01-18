@@ -17,6 +17,7 @@ import re
 router = Router()
 
 TELEGRAM_STARS = "XTR"
+DONATION_REGEX = re.compile("donation_[0-9]+")
 
 async def get_donate_data(user: User) -> tuple[str, InlineKeyboardMarkup]:
     """Generates donation selection `text` and `reply_markup` based on `user` data.
@@ -89,7 +90,7 @@ async def leaderboard_query_handler(query: CallbackQuery, user: User) -> None:
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=_("🔙 Back"), callback_data="donate_from_leaderboard")]])
     )
 
-@router.callback_query(F.data.regexp("donation_[0-9]+", mode="fullmatch"))
+@router.callback_query(F.data.regexp(DONATION_REGEX, mode="fullmatch"))
 async def donation_callback(query: CallbackQuery) -> None:
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text=_("💳 Pay"), pay=True)],
