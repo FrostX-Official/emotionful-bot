@@ -12,6 +12,8 @@ from tortoise.contrib.pydantic import pydantic_queryset_creator
 
 from db import User
 
+import re
+
 router = Router()
 
 TELEGRAM_STARS = "XTR"
@@ -87,7 +89,7 @@ async def leaderboard_query_handler(query: CallbackQuery, user: User) -> None:
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=_("🔙 Back"), callback_data="donate_from_leaderboard")]])
     )
 
-@router.callback_query(F.data.startswith("donation"))
+@router.callback_query(F.data.regexp("donation_[0-9]+", mode="fullmatch"))
 async def donation_callback(query: CallbackQuery) -> None:
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text=_("💳 Pay"), pay=True)],
